@@ -31,7 +31,108 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef struct{
+	int height = 4;
+	int width = 1;
+    bool arrayBrick[height][width] = {{1,1,1,1}};
+    char xCoordUnderBrick; //TrackHeight Of bottom of brick
+    char yCoordLeftBrick; //Tack ypos of brick from lest side
+    char rotation; //0X00=>0°  0X01=>90°  0X02=>180°  0X03=>270°
+} line;
 
+typedef struct{
+	int height = 2;
+	int width = 2;
+	bool arrayBrick[height][width] = {{1,1}
+    		                         ,{1,1}};
+    char xCoordUnderBrick; //TrackHeight Of bottom of brick
+    char yCoordLeftBrick; //Tack ypos of brick from lest side
+    char rotation; //0X00=>0°  0X01=>90°  0X02=>180°  0X03=>270°
+} square;
+
+typedef struct{
+	int height = 2;
+	int width = 3;
+	bool arrayBrick[height][width] = {{1,1,1}
+                                     ,{0,1,0}};
+    char xCoordUnderBrick; //TrackHeight Of bottom of brick
+    char yCoordLeftBrick; //Tack ypos of brick from lest side
+    char rotation; //0X00=>0°  0X01=>90°  0X02=>180°  0X03=>270°
+} tbrick;
+
+typedef struct{
+	int height = 3;
+	int width = 2;
+	bool arrayBrick[height][width] = {{1,0}
+    		                         ,{1,0}
+                                     ,{1,1}};
+    char xCoordUnderBrick; //TrackHeight Of bootom of brick
+    char yCoordLeftBrick; //Tack ypos of brick from lest side
+    char rotation; //0X00=>0°  0X01=>90°  0X02=>180°  0X03=>270°
+} lbrick;
+
+typedef struct{
+	int height = 3;
+	int width = 2;
+	bool arrayBrick[height][width] = {{1,0}
+    		                         ,{1,1}
+                                     ,{0,1}};
+    char xCoordUnderBrick; //Track Height Of bottom of brick
+    char yCoordLeftBrick; //Tack ypos of brick from lest side
+    char rotation; //0X00=>0°  0X01=>90°  0X02=>180°  0X03=>270°
+} blitzbrick;
+
+typedef struct{
+	int bufferheight = 4;
+
+	int height = 16 + bufferheight;
+	int width = 8;
+	int score = 0;
+	bool playingfield[height][width] = {{0,0,0,0,0,0,0,0}  //BUFF
+                                       ,{0,0,0,0,0,0,0,0}  //BUFF
+                                       ,{0,0,0,0,0,0,0,0}  //BUFF
+                                       ,{0,0,0,0,0,0,0,0}  //BUFF
+	                                   ,{0,0,0,0,0,0,0,0}  //1
+    		                           ,{0,0,0,0,0,0,0,0}  //2
+                                       ,{0,0,0,0,0,0,0,0}  //3
+                                       ,{0,0,0,0,0,0,0,0}  //4
+	                                   ,{0,0,0,0,0,0,0,0}  //5
+	                                   ,{0,0,0,0,0,0,0,0}  //6
+	                                   ,{0,0,0,0,0,0,0,0}  //6
+	                                   ,{0,0,0,0,0,0,0,0}  //7
+	                                   ,{0,0,0,0,0,0,0,0}  //8
+	                                   ,{0,0,0,0,0,0,0,0}  //9
+	                                   ,{0,0,0,0,0,0,0,0}  //10
+	                                   ,{0,0,0,0,0,0,0,0}  //11
+		                               ,{0,0,0,0,0,0,0,0}  //12
+		                               ,{0,0,0,0,0,0,0,0}  //13
+		                               ,{0,0,0,0,0,0,0,0}  //14
+		                               ,{0,0,0,0,0,0,0,0}  //15
+		                               ,{0,0,0,0,0,0,0,0}};//16
+
+	//For when block is beoing placed (has to do with die checking)
+	bool ghostBlockField[height][width] = {{0,0,0,0,0,0,0,0}  //BUFF
+                                          ,{0,0,0,0,0,0,0,0}  //BUFF
+                                          ,{0,0,0,0,0,0,0,0}  //BUFF
+                                          ,{0,0,0,0,0,0,0,0}  //BUFF
+	                                      ,{0,0,0,0,0,0,0,0}  //1
+    		                              ,{0,0,0,0,0,0,0,0}  //2
+                                          ,{0,0,0,0,0,0,0,0}  //3
+                                          ,{0,0,0,0,0,0,0,0}  //4
+	                                      ,{0,0,0,0,0,0,0,0}  //5
+	                                      ,{0,0,0,0,0,0,0,0}  //6
+	                                      ,{0,0,0,0,0,0,0,0}  //6
+	                                      ,{0,0,0,0,0,0,0,0}  //7
+	                                      ,{0,0,0,0,0,0,0,0}  //8
+	                                      ,{0,0,0,0,0,0,0,0}  //9
+	                                      ,{0,0,0,0,0,0,0,0}  //10
+	                                      ,{0,0,0,0,0,0,0,0}  //11
+		                                  ,{0,0,0,0,0,0,0,0}  //12
+		                                  ,{0,0,0,0,0,0,0,0}  //13
+		                                  ,{0,0,0,0,0,0,0,0}  //14
+		                                  ,{0,0,0,0,0,0,0,0}  //15
+		                                  ,{0,0,0,0,0,0,0,0}};//16
+} tetrisgame;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -70,13 +171,16 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 
-typedef struct{
-	bool vShape[] = {/*add items to this*/};
-	bool hShape[] = {/*add items to this*/s};
-	bool *shape[] = {hShape,vShape};
 
 
-} brick;
+int* checkline(tetrisgame);
+bool checkdead(tetrisgame);
+
+//Deze twee werken in conjunctie samen
+void dropblock(tetrisgame);
+void placeblock(tetrisgame);
+
+void newblock(tetrisgame);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -154,6 +258,28 @@ int main(void)
   	  }
   /* USER CODE END 3 */
 	}
+
+
+int* checkline(tetrisgame t*) {    //Error in deze lijn (yet to fix) (It's late =( )
+	int linesCount = 0;
+	static int lines[4]; //MaxLines met een block is 4
+
+	for(int y = 0; i <= (&t->height)-1-bufferheight; y++) {
+		for(int x = 0; i <= (&t->width)-1; x++) {
+			if(&t->playingfield[x][y] == 0) { break; }
+			else if (x == 7) {lines[linescount] = y; linesCount++;}
+		}
+	}
+	return lines;
+}
+
+bool checkdead(tetrisgame t*) {    //same error
+	for(int x = 0; i <= (&t->width)-1; x++) {
+		if(&t->playingfield[x][15] == 1) { return 1;}
+	}
+	return 0;
+}
+
 
 /**
   * @brief System Clock Configuration
