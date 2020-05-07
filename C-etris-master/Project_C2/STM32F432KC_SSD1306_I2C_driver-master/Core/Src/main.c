@@ -54,7 +54,7 @@ typedef struct {
 	int height;// = 16 + bufferheight;
 	int width;// = 8;
 	int score;// = 0;
-	bool **playingfield;        //* = {{0,0,0,0,0,0,0,0}  //BUFF
+	bool playingfield;        //* = {{0,0,0,0,0,0,0,0}  //BUFF
 //                                       ,{0,0,0,0,0,0,0,0}  //BUFF
 //                                       ,{0,0,0,0,0,0,0,0}  //BUFF
 //                                       ,{0,0,0,0,0,0,0,0}  //BUFF
@@ -77,7 +77,7 @@ typedef struct {
 //		                         ,{0,0,0,0,0,0,0,0}};//16
 
 	//For when block is being placed (has to do with die checking)
-	bool **ghostBlockField;/*= {{0,0,0,0,0,0,0,0}  //BUFF
+	bool ghostBlockField;/*= {{0,0,0,0,0,0,0,0}  //BUFF
                                    ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
@@ -202,7 +202,7 @@ int main(void)
   	  if(die == true)
   	  {
 
-	  ssd1306_Fill(Black);
+  		ssd1306_Fill(Black);
 
 	  ssd1306_WriteString("[YOU DIED, RETURNING TO BONFIRE]", Font_16x26, White);
 
@@ -215,9 +215,9 @@ int* checkline(tetrisgame *t) {
 	int linesCount = 0;
 	static int lines[4]; //MaxLines met een block is 4
 
-	for(int y = 0; y <= (&t->height)-1-(&t->bufferheight); y++) {
+	for(int y = 0; y <= (st->height)-1-(t->bufferheight); y++) {
 		for(int x = 0; x <= (t->width)-1; x++) {
-			if(&t->playingfield[x][y] == 0) { break; }
+			if(t->playingfield[x][y] == 0) { break; }
 			else if (x == 7) {lines[linesCount] = y; linesCount++;}
 		}
 	}
@@ -234,7 +234,7 @@ bool checkdead(tetrisgame *t) {
 void placeblock(tetrisgame *t) {
 	bool placevalue = 0;
 
-	if(&t->xCoordUnderBrick == 0) {
+	if(t->xCoordUnderBrick == 0) {
 		placevalue = 1;
 	}
 	else {
@@ -256,6 +256,16 @@ void placeblock(tetrisgame *t) {
 				t->ghostBlockField[x][y] = 0;
 		}
 	}
+}
+
+void updateLCD() {
+	ssd1306_Fill(Black);
+	for(int x = 0; x <= ((int)t->width); x++) {
+		for(int y = t->bufferheight; y <= (int)t->height+ (int)t->bufferheight; y++) {
+			if(playingfield[x][y] == '1') { for(int a = 0; a <= 7; a++) { for(int b = 0; b <= 7; b++) { ssd1306_DrawPixel(a,b,White); } } }
+			}
+		}
+    }
 }
 
 
