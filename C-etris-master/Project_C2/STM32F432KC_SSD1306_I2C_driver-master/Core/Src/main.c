@@ -42,6 +42,7 @@ int width;
 
 
 
+
 typedef struct {
 	int bufferheight;// = 4;
 
@@ -139,14 +140,14 @@ static void MX_I2C1_Init(void);
 
 
 
-int* checkline(*tetrisgame);
-bool checkdead(*tetrisgame);
+int* checkline(tetrisgame *t);
+bool checkdead(tetrisgame *t);
 
 //Deze twee werken in conjunctie samen
-void dropblock(*tetrisgame);
-void placeblock(*tetrisgame);
+void dropblock(tetrisgame *t);
+void placeblock(tetrisgame *t);
 
-void* newblock(tetrisgame);
+void* newblock(tetrisgame *t);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
