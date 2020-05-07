@@ -81,23 +81,24 @@ typedef struct {
                                    ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
-	                                  ,{0,0,0,0,0,0,0,0}  //1
-    		                          ,{0,0,0,0,0,0,0,0}  //2
+                                          ,{0,0,0,0,0,0,0,0}  //BUFF
+	                                      ,{0,0,0,0,0,0,0,0}  //1
+    		                              ,{0,0,0,0,0,0,0,0}  //2
                                           ,{0,0,0,0,0,0,0,0}  //3
                                           ,{0,0,0,0,0,0,0,0}  //4
-	                                  ,{0,0,0,0,0,0,0,0}  //5
-	                                  ,{0,0,0,0,0,0,0,0}  //6
-	                                  ,{0,0,0,0,0,0,0,0}  //6
-	                                  ,{0,0,0,0,0,0,0,0}  //7
-	                                  ,{0,0,0,0,0,0,0,0}  //8
-	                                  ,{0,0,0,0,0,0,0,0}  //9
-	                                  ,{0,0,0,0,0,0,0,0}  //10
-	                                  ,{0,0,0,0,0,0,0,0}  //11
-		                          ,{0,0,0,0,0,0,0,0}  //12
-		                          ,{0,0,0,0,0,0,0,0}  //13
-		                          ,{0,0,0,0,0,0,0,0}  //14
-		                          ,{0,0,0,0,0,0,0,0}  //15
-		                          ,{0,0,0,0,0,0,0,0}};//16 */
+	                                      ,{0,0,0,0,0,0,0,0}  //5
+	                                      ,{0,0,0,0,0,0,0,0}  //6
+	                                      ,{0,0,0,0,0,0,0,0}  //6
+	                                      ,{0,0,0,0,0,0,0,0}  //7
+	                                      ,{0,0,0,0,0,0,0,0}  //8
+	                                      ,{0,0,0,0,0,0,0,0}  //9
+	                                      ,{0,0,0,0,0,0,0,0}  //10
+	                                      ,{0,0,0,0,0,0,0,0}  //11
+		                                  ,{0,0,0,0,0,0,0,0}  //12
+		                                  ,{0,0,0,0,0,0,0,0}  //13
+		                                  ,{0,0,0,0,0,0,0,0}  //14
+		                                  ,{0,0,0,0,0,0,0,0}  //15
+		                                  ,{0,0,0,0,0,0,0,0}};//16
 } tetrisgame;
 /* USER CODE END PTD */
 
@@ -139,14 +140,14 @@ static void MX_I2C1_Init(void);
 
 
 
-int* checkline(*tetrisgame);
-bool checkdead(*tetrisgame);
+int* checkline(tetrisgame);
+bool checkdead(tetrisgame);
 
 //Deze twee werken in conjunctie samen
-void dropblock(*tetrisgame);
-void placeblock(*tetrisgame);
+void dropblock(tetrisgame);
+void placeblock(tetrisgame);
 
-void* newblock(tetrisgame);
+void newblock(tetrisgame);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -166,6 +167,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	bool die = false;
+	int verticalMovement = 0;
+	int horizontalMovement = 0;
+	char delayTime = 0; // variable for the delaytime ---> affects falling of blocks
   /* USER CODE END 1 */
   
 
@@ -199,6 +203,18 @@ int main(void)
   ssd1306_Init();
   //init();
 
+      while (die=!true)
+  	  {
+    /* USER CODE END WHILE */
+
+	  int verticalMovement += 10;// still needs adjusting
+    /* USER CODE BEGIN 3 */
+	    ssd1306_Fill(Black);
+	    ssd1306_SetCursor(verticalMovement, horizontalMovement);
+	    HAL_Delay(delayTime);
+	    ssd1306_WriteString("[HIP,HIP]", Font_16x26, White);
+	//HAL_Delay(500);
+  	  }
   	  if(die == true)
   	  {
 
@@ -211,7 +227,7 @@ int main(void)
 	}
 
 
-int* checkline(tetrisgame *t) {
+int* checkline(tetrisgame t*) {    //Error in deze lijn (yet to fix) (It's late =( )
 	int linesCount = 0;
 	static int lines[4]; //MaxLines met een block is 4
 
@@ -224,9 +240,9 @@ int* checkline(tetrisgame *t) {
 	return lines;
 }
 
-bool checkdead(tetrisgame *t) {
-	for(int x = 0; x <= (t->width)-1; x++) {
-		if(t->playingfield[x][15] == 1) { return 1;}
+bool checkdead(tetrisgame t*) {    //same error
+	for(int x = 0; i <= (&t->width)-1; x++) {
+		if(&t->playingfield[x][15] == 1) { return 1;}
 	}
 	return 0;
 }
@@ -360,7 +376,7 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
-  /** Configure Analogue filter 
+  /** Configure Analog filter
   */
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
