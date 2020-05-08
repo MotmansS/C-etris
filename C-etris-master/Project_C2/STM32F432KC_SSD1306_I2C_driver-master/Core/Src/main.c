@@ -271,13 +271,22 @@ void placeblock(tetrisgame *t) {
 		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
 			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
 				t->ghostBlockField[x][y] = 0;
-		}
+		        }
+	        }
 	    }
-	  }
-	}
     }
+}
 
-
+void printLCD(tetrisgame *t) {
+	ssd1306_Fill(Black);
+	for(int x = 0; x <= width; x++) {
+		for(int y = t->bufferHeight - 1; y <= (int)t->height + (int)t->bufferHeight; y++) {
+			if(t->playingfield[x][y] == 1) {
+				for(int a = (x*8); a <= (x*8)+7; a++) { for(int b = (y*8); b <= (y*8)+7; b++) { ssd1306_DrawPixel(a,b,White); }}
+		    }
+	    }
+    }
+}
 /**
   * @brief System Clock Configuration
   * @retval None
