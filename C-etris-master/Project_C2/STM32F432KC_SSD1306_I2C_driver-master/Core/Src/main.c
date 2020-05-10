@@ -144,8 +144,12 @@ int* checkline(tetrisgame);
 bool checkdead(tetrisgame);
 
 //Deze twee werken in conjunctie samen
+<<<<<<< Updated upstream
 void dropblock(tetrisgame);
 void placeblock(tetrisgame);
+=======
+void placedropblock(tetrisgame *t);
+>>>>>>> Stashed changes
 
 void newblock(tetrisgame);
 /* USER CODE BEGIN PFP */
@@ -202,6 +206,7 @@ int main(void)
   //debug_print("Hello from STM32L432KC dev board\r\n");
   ssd1306_Init();
   //init();
+<<<<<<< Updated upstream
 
       while (die=!true)
   	  {
@@ -215,6 +220,15 @@ int main(void)
 	    ssd1306_WriteString("[HIP,HIP]", Font_16x26, White);
 	//HAL_Delay(500);
   	  }
+=======
+  while(1){
+	  newBlock();
+	  placedropblock();
+	  checkline();
+	  checkdead();
+	  //HAL_delay();
+  }
+>>>>>>> Stashed changes
   	  if(die == true)
   	  {
 
@@ -227,11 +241,20 @@ int main(void)
 	}
 
 
+<<<<<<< Updated upstream
 int* checkline(tetrisgame t*) {    //Error in deze lijn (yet to fix) (It's late =( )
 	int linesCount = 0;
 	static int lines[4]; //MaxLines met een block is 4
 
 	for(int y = 0; y <= (st->height)-1-(t->bufferheight); y++) {
+=======
+
+int* checkline(tetrisgame *t) {
+	int linesCount = 0;
+	static int lines[4]; //MaxLines met een block is 4
+
+	for(int y = 0; y <= (t->height)-1-(t->bufferheight); y++) {
+>>>>>>> Stashed changes
 		for(int x = 0; x <= (t->width)-1; x++) {
 			if(t->playingfield[x][y] == 0) { break; }
 			else if (x == 7) {lines[linesCount] = y; linesCount++;}
@@ -247,7 +270,7 @@ bool checkdead(tetrisgame t*) {    //same error
 	return 0;
 }
 
-void placeblock(tetrisgame *t) {
+void placedropblock(tetrisgame *t) {
 	bool placevalue = 0;
 
 	if(t->xCoordUnderBrick == 0) {
@@ -270,7 +293,21 @@ void placeblock(tetrisgame *t) {
 		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
 			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
 				t->ghostBlockField[x][y] = 0;
+<<<<<<< Updated upstream
 		}
+=======
+		        }
+	        }
+	    }
+	else {
+	    for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
+		    for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
+			    t->ghostBlockField[x][y] = 0;
+			    t->ghostBlockField[x][y-1] = 1;
+		    }
+        }
+	    t->xCoordUnderBrick = t->xCoordUnderBrick-1;
+>>>>>>> Stashed changes
 	}
 }
 
