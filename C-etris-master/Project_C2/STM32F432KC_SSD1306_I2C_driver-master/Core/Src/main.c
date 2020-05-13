@@ -35,22 +35,32 @@ typedef struct {
 
 int height;
 int width;
-bool **blockShape;
+bool *blockShape;
 
 
 }block;
 
-block longBlock = {4,1,{{true,true,true,true}}};
+block blocks[4];
+block *blockptr = NULL;
+ptr = blocks;
+
+block longBlock = {4,1,{true,true,true,true}};
 block blitzBlock = {2,3,{{false,true,true},{true,true,false}}};
 block Lblock = {3,2,{{true,false},{true,false},{true,true}}};
 block Tblock = {2,3,{{true,true,true},{false,true,false}}};
 
+void AssignPTR(){
 
-block blocks[4];
-blocks[0] =longBlock;
-blocks[1] =blitzBlock;
-blocks[2] =Lblock;
-blocks[3] =Tblock;
+blockptr->longBlock;
+blockptr++;
+blockptr->blitzBlock;
+blockptr++;
+blockptr->Lblock;
+blockptr ++;
+blockptr->tblock;
+
+}
+
 
 
 
@@ -279,8 +289,8 @@ void placeblock(tetrisgame *t) {
 
 void printLCD(tetrisgame *t) {
 	ssd1306_Fill(Black);
-	for(int x = 0; x <= width; x++) {
-		for(int y = t->bufferHeight - 1; y <= (int)t->height + (int)t->bufferHeight; y++) {
+	for(int x = 0; x <= t->width; x++) {
+		for(int y = t->bufferheight - 1; y <= (int)t->height + (int)t->bufferheight; y++) {
 			if(t->playingfield[x][y] == 1) {
 				for(int a = (x*8); a <= (x*8)+7; a++) { for(int b = (y*8); b <= (y*8)+7; b++) { ssd1306_DrawPixel(a,b,White); }}
 		    }
