@@ -19,14 +19,14 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <ssd1306_tests.h>
-#include <ssd1306.h>
 #include "main.h"
-#include <stdbool.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <ssd1306_tests.h>
+#include <ssd1306.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,31 +35,20 @@ typedef struct {
 
 int height;
 int width;
-bool *blockShape;
+bool **blockShape;
 
 
 }block;
 
 block blocks[4];
-block *blockptr = NULL;
-blockptr = blocks;
-
 block longBlock = {4,1,{true,true,true,true}};
 block blitzBlock = {2,3,{{false,true,true},{true,true,false}}};
 block Lblock = {3,2,{{true,false},{true,false},{true,true}}};
 block Tblock = {2,3,{{true,true,true},{false,true,false}}};
 
-void AssignPTR(){
 
-blockptr->longBlock;
-blockptr++;
-blockptr->blitzBlock;
-blockptr++;
-blockptr->Lblock;
-blockptr ++;
-blockptr->tblock;
 
-}
+
 
 
 
@@ -139,10 +128,26 @@ typedef struct {
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_I2C1_Init(void);
 
+
+void FillArr(tetrisgame *t);
+int* checkline(tetrisgame *t);
+bool checkdead(tetrisgame *t);
+
+//Deze twee werken in conjunctie samen
+void dropblock(tetrisgame *t);
+void placeblock(tetrisgame *t);
+
+void* newblock(tetrisgame *t);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart2;
@@ -162,18 +167,8 @@ HAL_StatusTypeDef returnValue = 0;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
-
-
-
-int* checkline(tetrisgame *t);
-bool checkdead(tetrisgame *t);
-
-//Deze twee werken in conjunctie samen
-void dropblock(tetrisgame *t);
-void placeblock(tetrisgame *t);
-
-void* newblock(tetrisgame *t);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -192,7 +187,10 @@ void init() {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	bool die = false;
+	blocks[0] = longBlock;
+	blocks[1] = blitzBlock;
+	blocks[2] = Lblock;
+	blocks[3] = Tblock;
   /* USER CODE END 1 */
   
 
@@ -215,6 +213,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
@@ -222,81 +221,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  //debug_print("Hello from STM32L432KC dev board\r\n");
-  ssd1306_Init();
-  //init();
+  while (1)
+  {
+    /* USER CODE END WHILE */
 
-  	  if(die == true)
-  	  {
-
-	  ssd1306_Fill(Black);
-
-	  ssd1306_WriteString("[YOU DIED, RETURNING TO BONFIRE]", Font_16x26, White);
-
-  	  }
+    /* USER CODE BEGIN 3 */
+  }
   /* USER CODE END 3 */
-	}
-
-
-int* checkline(tetrisgame *t) {
-	int linesCount = 0;
-	static int lines[4]; //MaxLines met een block is 4
-
-	for(int y = 0; y <= (&t->height)-1-(&t->bufferheight); y++) {
-		for(int x = 0; x <= (t->width)-1; x++) {
-			if(&t->playingfield[x][y] == 0) { break; }
-			else if (x == 7) {lines[linesCount] = y; linesCount++;}
-		}
-	}
-	return lines;
 }
 
-bool checkdead(tetrisgame *t) {
-	for(int x = 0; x <= (t->width)-1; x++) {
-		if(t->playingfield[x][15] == 1) { return 1;}
-	}
-	return 0;
-}
-
-void placeblock(tetrisgame *t) {
-	bool placevalue = 0;
-
-	if(&t->xCoordUnderBrick == 0) {
-		placevalue = 1;
-	}
-	else {
-		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
-			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
-		        if(t->playingfield[x-1][y] == 1 && t->ghostBlockField[x][y] == 1) { placevalue = 1; }
-		    }
-		}
-	if(placevalue == 1) {
-		//Place block
-		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
-			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
-				t->playingfield[x][y] = t->ghostBlockField[x][y] + t->playingfield[x][y];
-	     	    }
-			}
-		//Clear Ghost Arr
-		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
-			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
-				t->ghostBlockField[x][y] = 0;
-		        }
-	        }
-	    }
-    }
-}
-
-void printLCD(tetrisgame *t) {
-	ssd1306_Fill(Black);
-	for(int x = 0; x <= t->width; x++) {
-		for(int y = t->bufferheight - 1; y <= (int)t->height + (int)t->bufferheight; y++) {
-			if(t->playingfield[x][y] == 1) {
-				for(int a = (x*8); a <= (x*8)+7; a++) { for(int b = (y*8); b <= (y*8)+7; b++) { ssd1306_DrawPixel(a,b,White); }}
-		    }
-	    }
-    }
-}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -342,9 +275,18 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_I2C1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_I2C1
+                              |RCC_PERIPHCLK_ADC;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
+  PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSOURCE_MSI;
+  PeriphClkInit.PLLSAI1.PLLSAI1M = 1;
+  PeriphClkInit.PLLSAI1.PLLSAI1N = 16;
+  PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV7;
+  PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
+  PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
+  PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_ADC1CLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -358,6 +300,62 @@ void SystemClock_Config(void)
   /** Enable MSI Auto calibration 
   */
   HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Common config 
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.OversamplingMode = DISABLE;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel 
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**
@@ -469,6 +467,75 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+int* checkline(tetrisgame *t) {
+	int linesCount = 0;
+	static int lines[4]; //MaxLines met een block is 4
+
+	for(int y = 0; y <= (&t->height)-1-(&t->bufferheight); y++) {
+		for(int x = 0; x <= (t->width)-1; x++) {
+			if(&t->playingfield[x][y] == 0) { break; }
+			else if (x == 7) {lines[linesCount] = y; linesCount++;}
+		}
+	}
+	return lines;
+}
+
+bool checkdead(tetrisgame *t) {
+	for(int x = 0; x <= (t->width)-1; x++) {
+		if(t->playingfield[x][15] == 1) { return 1;}
+	}
+	return 0;
+}
+
+void placeblock(tetrisgame *t) {
+	bool placevalue = 0;
+
+	if(&t->xCoordUnderBrick == 0) {
+		placevalue = 1;
+	}
+	else {
+		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
+			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
+		        if(t->playingfield[x-1][y] == 1 && t->ghostBlockField[x][y] == 1) { placevalue = 1; }
+		    }
+		}
+	if(placevalue == 1) {
+		//Place block
+		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
+			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
+				t->playingfield[x][y] = t->ghostBlockField[x][y] + t->playingfield[x][y];
+	     	    }
+			}
+		//Clear Ghost Arr
+		for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
+			for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
+				t->ghostBlockField[x][y] = 0;
+		        }
+	        }
+	    }
+    }
+}
+
+void printLCD(tetrisgame *t) {
+	ssd1306_Fill(Black);
+	for(int x = 0; x <= t->width; x++) {
+		for(int y = t->bufferheight - 1; y <= (int)t->height + (int)t->bufferheight; y++) {
+			if(t->playingfield[x][y] == 1) {
+				for(int a = (x*8); a <= (x*8)+7; a++) { for(int b = (y*8); b <= (y*8)+7; b++) { ssd1306_DrawPixel(a,b,White); }}
+		    }
+	    }
+    }
+}
+
+void FillArr(tetrisgame *t)
+{
+  for(int x =0; x <8;x++ ) {
+      for(int y =0;y<20;y++ ) {
+	  t->playingfield[x][y]= 0;
+	  t->ghostBlockField[x][y]= 0;
+      }
+  }
+}
 /* USER CODE END 4 */
 
 /**
