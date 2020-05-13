@@ -32,12 +32,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 typedef struct {
-
 int height;
 int width;
 bool **blockShape;
-
-
 }block;
 
 block blocks[4];
@@ -45,13 +42,6 @@ block longBlock = {4,1,{true,true,true,true}};
 block blitzBlock = {2,3,{{false,true,true},{true,true,false}}};
 block Lblock = {3,2,{{true,false},{true,false},{true,true}}};
 block Tblock = {2,3,{{true,true,true},{false,true,false}}};
-
-
-
-
-
-
-
 
 typedef struct {
 	int bufferheight;// = 4;
@@ -223,10 +213,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  newBlock();
+	  placeblock();
+	  checkline();
+	  checkdead();
+	  //HAL_delay();
+  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
   /* USER CODE END 3 */
 }
 
@@ -319,7 +314,7 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
-  /** Common config 
+  /** Common config
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
@@ -340,7 +335,7 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
-  /** Configure Regular Channel 
+  /** Configure Regular Channel
   */
   sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = ADC_REGULAR_RANK_1;
@@ -386,7 +381,7 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
-  /** Configure Analogue filter 
+  /** Configure Analogue filter
   */
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
@@ -513,7 +508,20 @@ void placeblock(tetrisgame *t) {
 		        }
 	        }
 	    }
+	else {
+	    for(int x = t->xCoordUnderBrick; x <= (int)t->height + (int)t->xCoordUnderBrick; x++) {
+		    for(int y = t->yCoordLeftBrick; y <= (int)t->width + (int)t->yCoordLeftBrick; y++) {
+			    t->ghostBlockField[x][y] = 0;
+			    t->ghostBlockField[x][y-1] = 1;
+		    }
+        }
+	    t->xCoordUnderBrick = t->xCoordUnderBrick-1;
+        }
     }
+}
+
+void dropBlock(tetrisgame *t) {
+
 }
 
 void printLCD(tetrisgame *t) {
