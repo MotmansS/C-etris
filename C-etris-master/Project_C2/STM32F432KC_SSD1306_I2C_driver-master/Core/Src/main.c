@@ -177,10 +177,12 @@ void init() {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	blocks[0] = longBlock;
-	blocks[1] = blitzBlock;
-	blocks[2] = Lblock;
-	blocks[3] = Tblock;
+  tetrisgame tgame;
+  FillArr(tgame);
+blocks[0] = longBlock;
+blocks[1] = blitzBlock;
+blocks[2] = Lblock;
+blocks[3] = Tblock;
   /* USER CODE END 1 */
   
 
@@ -213,11 +215,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  newBlock();
-	  placeblock();
-	  checkline();
-	  checkdead();
-	  //HAL_delay();
+	  newblock(tgame,blocks);
+	  placeblock(tgame);
+	  checkline(tgame);
+	  checkdead(tgame);
+	  HAL_Delay(250);
+
   }
     /* USER CODE END WHILE */
 
@@ -520,9 +523,6 @@ void placeblock(tetrisgame *t) {
     }
 }
 
-void dropBlock(tetrisgame *t) {
-
-}
 
 void printLCD(tetrisgame *t) {
 	ssd1306_Fill(Black);
@@ -534,6 +534,7 @@ void printLCD(tetrisgame *t) {
 	    }
     }
 }
+
 
 void FillArr(tetrisgame *t)
 {
