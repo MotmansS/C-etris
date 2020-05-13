@@ -187,10 +187,12 @@ void init() {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  tetrisgame tgame;
 	blocks[0] = longBlock;
 	blocks[1] = blitzBlock;
 	blocks[2] = Lblock;
 	blocks[3] = Tblock;
+	FillArr(tgame);
   /* USER CODE END 1 */
   
 
@@ -226,6 +228,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+
   }
   /* USER CODE END 3 */
 }
