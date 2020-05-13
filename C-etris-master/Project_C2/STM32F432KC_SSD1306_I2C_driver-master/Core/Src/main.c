@@ -42,7 +42,7 @@ bool *blockShape;
 
 block blocks[4];
 block *blockptr = NULL;
-ptr = blocks;
+blockptr = blocks;
 
 block longBlock = {4,1,{true,true,true,true}};
 block blitzBlock = {2,3,{{false,true,true},{true,true,false}}};
