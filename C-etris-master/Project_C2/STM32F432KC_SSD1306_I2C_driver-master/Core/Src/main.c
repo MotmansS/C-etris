@@ -37,11 +37,13 @@ int width;
 bool **blockShape;
 }block;
 
-block blocks[4];
-block longBlock = {4,1,{true,true,true,true}};
-block blitzBlock = {2,3,{{false,true,true},{true,true,false}}};
-block Lblock = {3,2,{{true,false},{true,false},{true,true}}};
-block Tblock = {2,3,{{true,true,true},{false,true,false}}};
+ block *blocks[4];
+ block longBlock = {.height = 4,.width = 1,.blockShape = {1,1,1,1}};
+ block blitzBlock = {.height = 2,.width = 3, .blockShape = {{0,1,1},{1,1,0}}};
+ block Lblock = {.height =3,.width =2,.blockShape = {{1,1},{1,0},{1,1}}};
+ block Tblock = {.height = 22,.width =3,.blockShape = {{1,1,1},{0,1,0}}};
+
+
 
 typedef struct {
 	int bufferheight;// = 4;
@@ -132,7 +134,7 @@ bool checkdead(tetrisgame *t);
 void dropblock(tetrisgame *t);
 void placeblock(tetrisgame *t);
 
-void* newblock(tetrisgame *t);
+void newblock(tetrisgame *t,block *blockarr[],char blockcounter);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -178,11 +180,11 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   tetrisgame tgame;
-  FillArr(tgame);
-blocks[0] = longBlock;
-blocks[1] = blitzBlock;
-blocks[2] = Lblock;
-blocks[3] = Tblock;
+  FillArr(&tgame);
+blocks[0] = &longBlock;
+blocks[1] = &blitzBlock;
+blocks[2] = &Lblock;
+blocks[3] = &Tblock;
   /* USER CODE END 1 */
   
 
@@ -208,19 +210,18 @@ blocks[3] = Tblock;
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  char blockcounter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	  newblock(tgame,blocks);
-	  placeblock(tgame);
-	  checkline(tgame);
-	  checkdead(tgame);
+  while (1){
+	  newblock(&tgame, &blocks, blockcounter);
+	  placeblock(&tgame);
+	  checkline(&tgame);
+	  checkdead(&tgame);
 	  HAL_Delay(250);
-
+	   blockcounter++;
   }
     /* USER CODE END WHILE */
 
@@ -543,6 +544,15 @@ void FillArr(tetrisgame *t)
 	  t->playingfield[x][y]= 0;
 	  t->ghostBlockField[x][y]= 0;
       }
+  }
+}
+void newblock(tetrisgame *t,block *blockarr[], char blockcounter)
+{
+
+for(char i = 0; i< blockarr[blockcounter] -> width; i++){
+    for(char l = 0; l< blockarr[blockcounter] ->height; l++){
+    t-> ghostBlockField[i+3][l+3] =  t-> ghostBlockField[i+3][l+3] +  blockarr[blockcounter]->blockShape[i][l];
+   }
   }
 }
 /* USER CODE END 4 */
