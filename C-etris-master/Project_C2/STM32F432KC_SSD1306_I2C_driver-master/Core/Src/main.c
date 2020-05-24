@@ -32,13 +32,13 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 typedef struct {
-int height;
-int width;
-bool **blockShape;
+char height;
+char width;
+bool blockShape[3][3];
 }block;
 
  block *blocks[4];
- block longBlock = {.height = 4,.width = 1,.blockShape = {1,1,1,1}};
+ block longBlock = {.height =4,.width =1, .blockShape ={{1,1,1,1}}};
  block blitzBlock = {.height = 2,.width = 3, .blockShape = {{0,1,1},{1,1,0}}};
  block Lblock = {.height =3,.width =2,.blockShape = {{1,1},{1,0},{1,1}}};
  block Tblock = {.height = 22,.width =3,.blockShape = {{1,1,1},{0,1,0}}};
@@ -57,7 +57,7 @@ typedef struct {
 	int height;// = 16 + bufferheight;
 	int width;// = 8;
 	int score;// = 0;
-	bool **playingfield;     /*= {{0,0,0,0,0,0,0,0}  //BUFF
+	bool playingfield[20][8];     /*= {{0,0,0,0,0,0,0,0}  //BUFF
                                        ,{0,0,0,0,0,0,0,0}  //BUFF
                                     ,{0,0,0,0,0,0,0,0}  //BUFF
                                        ,{0,0,0,0,0,0,0,0}  //BUFF
@@ -80,7 +80,7 @@ typedef struct {
 		                         ,{0,0,0,0,0,0,0,0}};*///16
 
 	//For when block is being placed (has to do with die checking)
-	bool**ghostBlockField;/*= {{0,0,0,0,0,0,0,0}  //BUFF
+	bool ghostBlockField[20][8];/*= {{0,0,0,0,0,0,0,0}  //BUFF
                                    ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
                                           ,{0,0,0,0,0,0,0,0}  //BUFF
@@ -129,7 +129,7 @@ static void MX_I2C1_Init(void);
 void FillArr(tetrisgame *t);
 int* checkline(tetrisgame *t);
 bool checkdead(tetrisgame *t);
-
+void printLCD(tetrisgame *t);
 //Deze twee werken in conjunctie samen
 void dropblock(tetrisgame *t);
 void placeblock(tetrisgame *t);
@@ -219,6 +219,7 @@ blocks[3] = &Tblock;
 	  newblock(&tgame, &blocks, blockcounter);
 	  placeblock(&tgame);
 	  checkline(&tgame);
+	  printLCD(&tgame);
 	  checkdead(&tgame);
 	  HAL_Delay(250);
 	   blockcounter++;
@@ -551,7 +552,7 @@ void newblock(tetrisgame *t,block *blockarr[], char blockcounter)
 
 for(char i = 0; i< blockarr[blockcounter] -> width; i++){
     for(char l = 0; l< blockarr[blockcounter] ->height; l++){
-    t-> ghostBlockField[i+3][l+3] =  t-> ghostBlockField[i+3][l+3] +  blockarr[blockcounter]->blockShape[i][l];
+    t-> ghostBlockField[i+3][l+3] =  t->ghostBlockField[i][l] +  blockarr[blockcounter]->blockShape[i][l];
    }
   }
 }
